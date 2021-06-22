@@ -1,55 +1,32 @@
 import React, { Component } from 'react'
 
-import MyAlgo from '@randlabs/myalgo-connect';
-
-
 import Chart from "react-apexcharts";
 
 import {
   Button,
   Heading,
   Card,
-  Radio,
-  Field,
   AlgoAddress,
-  Blockie
+  connectToMyAlgo,
 } from 'pipeline-ui'
 
-
+//var url = 'https://api.algoexplorer.io/idx2/vs/assets/137594422/balances?limit=100'
 var con_status = "Status: Not Connected";
+var myAddress = "";
 
-const myAlgoWallet = new MyAlgo();
-
-/*experimental chart component*/
-function testfunc(props) {
+/*experimental function component*/
+function testfunc() {
   return <div><p></p>test function</div>;
-
 }
-
-/*Warning: Browser will block pop-up if user doesn't trigger myAlgoWallet.connect() with a button interation */
-const connectToMyAlgo = async () => {
- con_status = "Status: Attempting to connect...";
-  try {
-    const accounts = await myAlgoWallet.connect();
-
-    const addresses = accounts.map(account => account.address);
-
-    con_status = "Status: Connected" ;
-
-  } catch (err) {
-    console.error(err);
-  }
-}
-
-
-class test extends React.Component {
+class test extends Component {
 
   constructor(props) {
     super(props);
     this.state = {
       con_status_text: con_status,
+      address: myAddress,
       series: [{
-      data: [{
+        data: [{
           x: new Date(1538778600000),
           y: [6629.81, 6650.5, 6623.04, 6633.33]
         },
@@ -289,34 +266,34 @@ class test extends React.Component {
           x: new Date(1538884800000),
           y: [6604.98, 6606, 6604.07, 6606]
         },
-      ]
-    }],
-    options: {
-      chart: {
-        type: 'candlestick',
-        height: 350
-      },
-      title: {
-        text: 'CandleStick Chart',
-        align: 'left'
-      },
-      xaxis: {
-        type: 'datetime'
-      },
-      yaxis: {
-        tooltip: {
-          enabled: true
+        ]
+      }],
+      options: {
+        chart: {
+          type: 'candlestick',
+          height: 350
+        },
+        title: {
+          text: 'CandleStick Chart',
+          align: 'left'
+        },
+        xaxis: {
+          type: 'datetime'
+        },
+        yaxis: {
+          tooltip: {
+            enabled: true
+          }
         }
-      }
-    },
-  
-  
-  };
-}
-
+      },
+    };
+  }
 
   updateConnection = () => {
-    this.setState({ con_status_text: con_status });
+    this.setState({
+      con_status_text: con_status,
+      address: myAddress
+    });
   }
 
   render() {
@@ -325,30 +302,22 @@ class test extends React.Component {
       <Button size={'large'}
 
         onClick={() => {
-          connectToMyAlgo();
-          this.updateConnection();
+          con_status = "Attempting to connect...";
+
+          connectToMyAlgo()
+            .then(accounts => {
+              con_status = "Status: Connected"
+              let item1 = accounts[0]
+              myAddress = item1["address"];
+              this.updateConnection();
+            });
+
         }}>Connect to MyAlgo</Button>
 
-      <Card bg="black" color="white" maxWidth={"300px"}>{this.state.con_status_text}</Card>
-      <Field label="Choose transaction speed">
-        <Radio label="Quick" my={2} />
-        <Radio defaultChecked label="Standard" my={2} />
-        <Radio disabled label="Slower" my={2} />
-        <Radio checked disabled label="Custom" my={2} />
-      </Field>
-      <AlgoAddress address="0x9505C8Fc1aD98b0aC651b91245d02D055fEc8E49" />
-      <Blockie
-        opts={{
-          seed: "foo",
-          color: "#dfe",
-          bgcolor: "#a71",
-          size: 50,
-          scale: 3,
-          spotcolor: "#000"
-        }}
-      />
-      {testfunc()}
+      <Card bg="black" color="white" maxWidth={"500px"}>{this.state.con_status_text}</Card>
       
+      <AlgoAddress maxWidth={"500px"} address={this.state.address} />
+
       <div className="app">
         <div className="row">
           <div className="mixed-chart">
@@ -362,11 +331,9 @@ class test extends React.Component {
         </div>
       </div>
 
- 
-    
-  
-    </div>
+      <Card bg="blue" color="white" maxWidth={"500px"}>The function of this app is to demonstrate the ability to make a connection to MyAlgo via a React library component and return data (the first user address) to another component. The chart above is proof-of-concept only.</Card>
 
+    </div>
   }
 }
 export default test
