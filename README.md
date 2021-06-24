@@ -5,7 +5,11 @@
 
 ## Important info:
 
-The app cannot currently be run or built from the sourcec code as-is, as it is based on a modified version of the dependency "pipeline-ui". This is a work-in-progress. To modify the dependecny, add the following line of code to the index.js file under dist/es in the pipeline-ui node modules folder. Next, create a new folder in the same directory. Name the folder Pipeline. Create a file inside of it and name it index.js. Paste the following code into the file and save it. Finally, install Myalgo Connect and AlgoSdk in the "test" directory. 
+The app cannot currently be run or built from the sourcec code as-is, as it is based on a modified version of the dependency "pipeline-ui". This is a work-in-progress. To modify the dependecny, add the following line of code to the index.js file under dist/es in the pipeline-ui node modules folder. 
+
+export { default as Pipeline } from './Pipeline';
+
+Next, create a new folder in the same directory. Name the folder Pipeline. Create a file inside of it and name it index.js. Paste the following code into the file and save it. Finally, install Myalgo Connect and AlgoSdk in the "test" directory. 
 
 import MyAlgo from '@randlabs/myalgo-connect';
 import algosdk from 'algosdk';
