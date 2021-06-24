@@ -9,10 +9,11 @@ import {
   AlgoAddress,
   Field,
   Input,
+  Link,
   Pipeline
 } from 'pipeline-ui'
 
-//var url = 'https://api.algoexplorer.io/idx2/vs/assets/137594422/balances?limit=100'
+var url = 'https://algoexplorer.io/tx/'
 var con_status = "Status: Not Connected";
 var myAddress = "";
 const myAlgoWallet = Pipeline.init();
@@ -28,6 +29,7 @@ class test extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      txID: "",
       amount:1,
       note:"",
       recipient:"",
@@ -342,7 +344,7 @@ class test extends Component {
       <Field label="Recipient Address">
         <Input type="text" required={true} placeholder="" onChange={this.recipientChangeHandler} />
       </Field><br></br>
-      <Field label="Amount">
+      <Field label="Amount (in micro Algos)">
         <Input type="number" required={true} placeholder="" onChange={this.amountChangeHandler} />
       </Field><br></br>
       <Field label="Note">
@@ -351,13 +353,20 @@ class test extends Component {
       <Button size={'large'}
 
         onClick={() => {
-          Pipeline.send(this.state.recipient,this.state.amount,this.state.note,myAddress,myAlgoWallet)
+          Pipeline.send(this.state.recipient,parseInt(this.state.amount),this.state.note,myAddress,myAlgoWallet)
           .then(data => {
-            alert(data);
+            if(typeof data !== "undefined"){
+            data = url + data.slice(1, -1);
+            this.setState({ txID: data });
+            }
           });
         }
         }
-      >Send</Button>
+      >Send</Button><br></br>
+
+      <Card bg="grey" color="white" maxWidth={"500px"}>
+        <Link onClick={() => { window.open(this.state.txID) }} >{this.state.txID}</Link>
+      </Card>
 
       <div className="app">
         <div className="row">
@@ -372,7 +381,7 @@ class test extends Component {
         </div>
       </div>
 
-      <Card bg="blue" color="white" maxWidth={"500px"}>The function of this app is to demonstrate the ability to make a connection to MyAlgo via a React library component and return data (the first user address) to another component. The chart above is proof-of-concept only.</Card>
+      <Card bg="blue" color="white" maxWidth={"500px"}>The function of this app is to demonstrate the ability to make a connection to MyAlgo via a custom class, execute a transaction and return data to multiple React components. The chart above is proof-of-concept only.</Card>
 
     </div>
   }
