@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 
 import Chart from "react-apexcharts";
 
+import Pipeline from "pipeline";
+
 import {
   Button,
   Heading,
@@ -10,7 +12,6 @@ import {
   Field,
   Input,
   Link,
-  Pipeline
 } from 'pipeline-ui'
 
 var url = 'https://algoexplorer.io/tx/'
