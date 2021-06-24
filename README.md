@@ -1,70 +1,84 @@
-# Getting Started with Create React App
+# Deploying the Test Build
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+ npm install -g serve
+  serve -s build
 
-## Available Scripts
+## Important info:
 
-In the project directory, you can run:
+The app cannot currently be run or built from the sourcec code as-is, as it is based on a modified version of the dependency "pipeline-ui". This is a work-in-progress. To modify the dependecny, add the following line of code to the index.js file under dist/es in the pipeline-ui node modules folder. Next, create a new folder in the same directory. Name the folder Pipeline. Create a file inside of it and name it index.js. Paste the following code into the file and save it. Finally, install Myalgo Connect and AlgoSdk in the "test" directory. 
 
-### `npm start`
+import MyAlgo from '@randlabs/myalgo-connect';
+import algosdk from 'algosdk';
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+export default class Pipeline {
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+    static init() {
+        return new MyAlgo();
+    }
 
-### `npm test`
+    static async connect(wallet) {
+        try {
+            const accounts = await wallet.connect();
+            let item1 = accounts[0];
+            item1 = item1["address"];
+            return item1;
+        }
+        catch (err) {
+            console.error(err);
+        }
+    }
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+     static async send(address, amount = 1, note = "Transaction note",sendingAddress,wallet) {
+         
+        const algodToken = {'X-API-Key': 'dmONugeHOX2DC8nDb3v8m6Bo9cI3WHbW6Ntt4QCZ'};
+        const algodServer = "https://mainnet-algorand.api.purestake.io/ps2";
+        const algodPort = "";
+        
+       
+        const data = await (async () => {
+            try {
+                const algodClient = new algosdk.Algodv2(algodToken, algodServer, '');
+                const params = await algodClient.getTransactionParams().do();
 
-### `npm run build`
+                const txn = {
+                    ...params,
+                    type: 'pay',
+                    from: sendingAddress,
+                    to: address,
+                    amount: amount,
+                    note: new Uint8Array(Buffer.from(note)),
+                };
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+                const signedTxn = await wallet.signTransaction(txn);
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+                await algodClient.sendRawTransaction(signedTxn.blob).do();
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+                return signedTxn;
+            }
+            catch (err) {
+                console.error(err);
+            }
+        })();
 
-### `npm run eject`
+        return JSON.stringify(data);
+    }
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+}
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+/*
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+usage
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+const myAlgoWallet = Pipeline.init();
 
-## Learn More
+Pipeline.connect(myAlgoWallet)
+    .then(data => {
+        console.log(data);
+    });
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Pipeline.send(address, amount, note, sendingAddress, myAlgowallet)
+    .then(data => {
+        console.log(data);
+    });
 
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+*/
