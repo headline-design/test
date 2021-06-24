@@ -7,12 +7,17 @@ import {
   Heading,
   Card,
   AlgoAddress,
-  connectToMyAlgo,
+  Field,
+  Input,
+  Pipeline
 } from 'pipeline-ui'
 
 //var url = 'https://api.algoexplorer.io/idx2/vs/assets/137594422/balances?limit=100'
 var con_status = "Status: Not Connected";
 var myAddress = "";
+const myAlgoWallet = Pipeline.init();
+
+
 
 /*experimental function component*/
 function testfunc() {
@@ -23,6 +28,9 @@ class test extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      amount:1,
+      note:"",
+      recipient:"",
       con_status_text: con_status,
       address: myAddress,
       series: [{
@@ -296,6 +304,18 @@ class test extends Component {
     });
   }
 
+  recipientChangeHandler = (event) => {
+    this.setState({ recipient: event.target.value });
+  }
+
+  amountChangeHandler = (event) => {
+    this.setState({ amount: event.target.value });
+  }
+
+  noteChangeHandler = (event) => {
+    this.setState({ note: event.target.value });
+  }
+
   render() {
     return <div align="center">
       <Heading>Pipeline UI Demo</Heading>
@@ -303,20 +323,41 @@ class test extends Component {
 
         onClick={() => {
           con_status = "Attempting to connect...";
+          this.updateConnection();
 
-          connectToMyAlgo()
+          Pipeline.connect(myAlgoWallet)
             .then(accounts => {
-              con_status = "Status: Connected"
-              let item1 = accounts[0]
-              myAddress = item1["address"];
+              con_status = "Status: Connected";
+              myAddress = accounts;
               this.updateConnection();
             });
-
-        }}>Connect to MyAlgo</Button>
+        }
+        }
+      >Connect to MyAlgo</Button>
 
       <Card bg="black" color="white" maxWidth={"500px"}>{this.state.con_status_text}</Card>
-      
+
       <AlgoAddress maxWidth={"500px"} address={this.state.address} />
+
+      <Field label="Recipient Address">
+        <Input type="text" required={true} placeholder="" onChange={this.recipientChangeHandler} />
+      </Field><br></br>
+      <Field label="Amount">
+        <Input type="number" required={true} placeholder="" onChange={this.amountChangeHandler} />
+      </Field><br></br>
+      <Field label="Note">
+        <Input type="text" required={true} placeholder="" onChange={this.noteChangeHandler} />
+      </Field><br></br>
+      <Button size={'large'}
+
+        onClick={() => {
+          Pipeline.send(this.state.recipient,this.state.amount,this.state.note,myAddress,myAlgoWallet)
+          .then(data => {
+            alert(data);
+          });
+        }
+        }
+      >Send</Button>
 
       <div className="app">
         <div className="row">
