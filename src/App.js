@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 
 import Chart from "react-apexcharts";
 
-import Pipeline from "pipeline";
+import Pipeline from "@pipeline-ui-2/pipeline";
 
 import {
   Button,
