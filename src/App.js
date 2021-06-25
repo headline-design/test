@@ -6,6 +6,9 @@ import Pipeline from "@pipeline-ui-2/pipeline";
 
 import './App.css';
 
+import Select from 'react-select';
+import 'react-dropdown/style.css';
+
 
 import {
   Button,
@@ -14,13 +17,17 @@ import {
   AlgoAddress,
   Field,
   Input,
-  Link,
+  Link
 } from 'pipeline-ui'
 
 var url = 'https://algoexplorer.io/tx/'
 var con_status = "Status: Not Connected";
 var myAddress = "";
 const myAlgoWallet = Pipeline.init();
+const opt = [
+  { value: 'Algorand', label: 'Algorand' },
+  { value: 'ASA', label: 'ASA' }
+]
 
 
 
@@ -33,6 +40,8 @@ class test extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      asa: "Algorand",
+      asaNumb: "",
       txID: "",
       amount:1,
       note:"",
@@ -322,6 +331,14 @@ class test extends Component {
     this.setState({ note: event.target.value });
   }
 
+  asaChangeHandler = (event) => {
+    this.setState({ asa: event.value });
+  }
+
+  asaNumbChangeHandler = (event) => {
+    this.setState({ asaNumb: event.target.value });
+  }
+
   render() {
     return <div align="center">
       <Heading>Pipeline UI Demo</Heading>
@@ -343,8 +360,17 @@ class test extends Component {
 
       <Card bg="black" color="white" maxWidth={"500px"}>{this.state.con_status_text}</Card>
 
-      <AlgoAddress maxWidth={"500px"} address={this.state.address} />
-
+      <AlgoAddress maxWidth={"500px"} address={this.state.address} /><br></br>
+      <Field label="Select your asset"></Field><br></br>
+      <Select
+      defaultValue={this.state.value}
+      onChange={this.asaChangeHandler}
+            options={opt}
+          />
+      <br></br><br></br>
+      <Field label="ASA Index Number:">
+        <Input type="number" required={true} placeholder="" onChange={this.asaNumbChangeHandler} />
+      </Field><br></br>
       <Field label="Recipient Address">
         <Input type="text" required={true} placeholder="" onChange={this.recipientChangeHandler} />
       </Field><br></br>
@@ -352,18 +378,29 @@ class test extends Component {
         <Input type="number" required={true} placeholder="" onChange={this.amountChangeHandler} />
       </Field><br></br>
       <Field label="Note">
-        <Input type="text" required={true} placeholder="" onChange={this.noteChangeHandler} />
+        <Input type="text" required={true} placeholder="" selectOnChange={this.noteChangeHandler} />
       </Field><br></br>
       <Button size={'large'}
 
         onClick={() => {
-          Pipeline.send(this.state.recipient,parseInt(this.state.amount),this.state.note,myAddress,myAlgoWallet)
-          .then(data => {
-            if(typeof data !== "undefined"){
-            data = url + data.slice(1, -1);
-            this.setState({ txID: data });
-            }
-          });
+          if (this.state.asa == "Algorand") {
+            Pipeline.send(this.state.recipient, parseInt(this.state.amount), this.state.note, myAddress, myAlgoWallet)
+              .then(data => {
+                if (typeof data !== "undefined") {
+                  data = url + data.slice(1, -1);
+                  this.setState({ txID: data });
+                }
+              });
+          }
+          else{
+            Pipeline.sendASA(this.state.recipient, parseInt(this.state.amount), this.state.note, myAddress, myAlgoWallet,parseInt(this.state.asaNumb))
+              .then(data => {
+                if (typeof data !== "undefined") {
+                  data = url + data.slice(1, -1);
+                  this.setState({ txID: data });
+                }
+              });
+          }
         }
         }
       >Send</Button><br></br>
