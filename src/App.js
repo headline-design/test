@@ -40,6 +40,7 @@ class test extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      asaNumbVis: "hidden",
       asa: "Algorand",
       asaNumb: "",
       txID: "",
@@ -333,10 +334,17 @@ class test extends Component {
 
   asaChangeHandler = (event) => {
     this.setState({ asa: event.value });
+    if (event.value == "Algorand"){
+      this.setState({ asaNumbVis: "hidden"});
+    }
+    else{
+      this.setState({ asaNumbVis: "visible"});
+    }
   }
 
   asaNumbChangeHandler = (event) => {
     this.setState({ asaNumb: event.target.value });
+    
   }
 
   render() {
@@ -361,16 +369,15 @@ class test extends Component {
       <Card bg="black" color="white" maxWidth={"500px"}>{this.state.con_status_text}</Card>
 
       <AlgoAddress maxWidth={"500px"} address={this.state.address} /><br></br>
-      <Field label="Select your asset"></Field><br></br>
+      <Field label="Select your asset:"></Field><br></br>
       <Select
       defaultValue={this.state.value}
       onChange={this.asaChangeHandler}
             options={opt}
-          />
-      <br></br><br></br>
-      <Field label="ASA Index Number:">
+          /><Field style={{visibility: this.state.asaNumbVis}} label="ASA Index Number:">
         <Input type="number" required={true} placeholder="" onChange={this.asaNumbChangeHandler} />
       </Field><br></br>
+
       <Field label="Recipient Address">
         <Input type="text" required={true} placeholder="" onChange={this.recipientChangeHandler} />
       </Field><br></br>
