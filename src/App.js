@@ -4,6 +4,9 @@ import Chart from "react-apexcharts";
 
 import Pipeline from "@pipeline-ui-2/pipeline";
 
+import './App.css';
+
+
 import {
   Button,
   Heading,
