@@ -318,19 +318,6 @@ class test extends Component {
     };
   }
 
-  componentDidMount() {
-
-    fetch('https://some-api.com/harry-potter')
-
-    .then((response) => response.json())
-
-    .then(booksList => {
-
-        this.setState({ books: booksList });
-
-    });
-
-}
 
   updateBalance = () => {
     let url2 = indexerURL + myAddress;
