@@ -22,6 +22,7 @@ import {
 } from 'pipeline-ui'
 
 
+var indexerURL = "https://algoexplorerapi.io/idx2/v2/accounts/";
 var asaNames = AsaList;
 var url = 'https://algoexplorer.io/tx/';
 var con_status = "Status: Not Connected";
@@ -43,6 +44,7 @@ class test extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      balance: "",
       asaNumbVis: "none",
       asa: "Algorand",
       asaNumb: "",
@@ -316,6 +318,33 @@ class test extends Component {
     };
   }
 
+  componentDidMount() {
+
+    fetch('https://some-api.com/harry-potter')
+
+    .then((response) => response.json())
+
+    .then(booksList => {
+
+        this.setState({ books: booksList });
+
+    });
+
+}
+
+  updateBalance = () => {
+    let url2 = indexerURL + myAddress;
+    fetch(url2)
+      .then((response) => response.json())
+      .then(data => {
+
+          let myBalance = ". Balance: " + JSON.stringify(data.account.amount / 1000000) + " Algos";
+          this.setState({ balance: myBalance });
+        }).catch(function () {
+          alert("Error occured  " + url2);
+        });
+  }
+
   updateConnection = () => {
     this.setState({
       con_status_text: con_status,
@@ -364,12 +393,14 @@ class test extends Component {
               con_status = "Status: Connected";
               myAddress = accounts;
               this.updateConnection();
+              this.updateBalance();
             });
         }
         }
       >Connect to MyAlgo</Button>
 
-      <Card bg="black" color="white" maxWidth={"500px"}>{this.state.con_status_text}</Card>
+      <Card bg="black" color="white" maxWidth={"500px"}>{this.state.con_status_text + this.state.balance}</Card>
+      
 
       <AlgoAddress maxWidth={"500px"} address={this.state.address} /><br></br>
 
@@ -397,7 +428,6 @@ class test extends Component {
         <Input type="text" required={true} placeholder="" selectOnChange={this.noteChangeHandler} />
       </Field><br></br>
       <Button size={'large'}
-
         onClick={() => {
           if (this.state.asa == "Algorand") {
             Pipeline.send(this.state.recipient, parseInt(this.state.amount), this.state.note, myAddress, myAlgoWallet)
@@ -409,6 +439,7 @@ class test extends Component {
                   };
                 }
               });
+              this.updateBalance();
           }
           else{
             Pipeline.sendASA(this.state.recipient, parseInt(this.state.amount), this.state.note, myAddress, myAlgoWallet,parseInt(this.state.asaNumb))
@@ -420,6 +451,7 @@ class test extends Component {
                   };
                 }
               });
+              this.updateBalance();
           }
         }
         }
