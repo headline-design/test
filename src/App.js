@@ -19,7 +19,6 @@ import {
   Field,
   Input,
   MyAlgoButton,
-  Link
 } from 'pipeline-ui'
 
 
@@ -50,9 +49,9 @@ class test extends Component {
       asa: "Algorand",
       asaNumb: "",
       txID: "",
-      amount:1,
-      note:"",
-      recipient:"",
+      amount: 1,
+      note: "",
+      recipient: "",
       con_status_text: con_status,
       address: myAddress,
       series: [{
@@ -304,8 +303,8 @@ class test extends Component {
           height: 350
         },
         title: {
-          text: 'CandleStick Chart',
-          align: 'left'
+          text: 'Demo Chart',
+          align: 'center'
         },
         xaxis: {
           type: 'datetime'
@@ -326,11 +325,11 @@ class test extends Component {
       .then((response) => response.json())
       .then(data => {
 
-          let myBalance = ". Balance: " + JSON.stringify(data.account.amount / 1000000) + " Algos";
-          this.setState({ balance: myBalance });
-        }).catch(function () {
-          alert("Error occured  " + url2);
-        });
+        let myBalance = ". Balance: " + JSON.stringify(data.account.amount / 1000000) + " Algos";
+        this.setState({ balance: myBalance });
+      }).catch(function () {
+        alert("Error occured  " + url2);
+      });
   }
 
   updateConnection = () => {
@@ -354,23 +353,23 @@ class test extends Component {
 
   asaChangeHandler = (event) => {
     this.setState({ asa: event.value });
-    if (event.value == "Algorand"){
-      this.setState({ asaNumbVis: "none"});
+    if (event.value == "Algorand") {
+      this.setState({ asaNumbVis: "none" });
     }
-    else{
-      this.setState({ asaNumbVis: "block"});
+    else {
+      this.setState({ asaNumbVis: "block" });
     }
   }
 
   asaNumbChangeHandler = (event) => {
     this.setState({ asaNumb: event.value });
-    
+
   }
 
   render() {
     return <div align="center">
       <Heading>Pipeline UI Demo</Heading>
-      <MyAlgoButton size={'large'}
+      <MyAlgoButton size={"500px"}
 
         onClick={() => {
           con_status = "Attempting to connect...";
@@ -387,35 +386,37 @@ class test extends Component {
         }
       >Connect to MyAlgo</MyAlgoButton>
 
-      <Card bg="black" color="white" maxWidth={"500px"}>{this.state.con_status_text + this.state.balance}</Card>
-      
+      <Card bg="blue" color="white" maxWidth={"500px"}>{this.state.con_status_text + this.state.balance}</Card>
+
 
       <AlgoAddress maxWidth={"500px"} address={this.state.address} /><br></br>
 
       <Field label="Select your asset:"></Field>
-      <div style={{width: '250px'}}>
-      <Select
-        defaultValue={this.state.value}
-        onChange={this.asaChangeHandler}
-        options={opt}
-      /></div>
-      <div style={{width: '250px', display: this.state.asaNumbVis}}>
-      <Field label="Verified ASA's:"></Field>
+      <div style={{ width: '500px' }}>
+        <Select
+          style={{ width: '500px' }}
+          defaultValue={this.state.value}
+          onChange={this.asaChangeHandler}
+          options={opt}
+        />
+      </div>
+      <div style={{ width: '500px', display: this.state.asaNumbVis }}>
+        <Field label="Verified ASA's:" required={true} ></Field>
         <Select
           defaultValue={this.state.value}
           onChange={this.asaChangeHandler}
           options={asaNames} onChange={this.asaNumbChangeHandler} /></div>
 
-      <Field label="Recipient Address">
-        <Input type="text" required={true} placeholder="" onChange={this.recipientChangeHandler} />
+      <Field label="Recipient Address" style={{ width: '500px' }}>
+        <Input style={{ width: '500px' }} type="text" required={true} placeholder="" onChange={this.recipientChangeHandler} />
       </Field><br></br>
-      <Field label="Amount (in micro Algos)">
-        <Input type="number" required={true} placeholder="" onChange={this.amountChangeHandler} />
+      <Field style={{ width: '500px' }} label="Amount (in micro Algos)">
+        <Input style={{ width: '500px' }} type="number" required={true} placeholder="" onChange={this.amountChangeHandler} />
       </Field><br></br>
-      <Field label="Note">
-        <Input type="text" required={true} placeholder="" selectOnChange={this.noteChangeHandler} />
+      <Field style={{ width: '500px' }} label="Note">
+        <Input style={{ width: '500px' }} type="text" required={true} placeholder="" selectOnChange={this.noteChangeHandler} />
       </Field><br></br>
-      <Button size={'large'}
+      <Button color="blue" size={"500px"}
         onClick={() => {
           if (this.state.asa == "Algorand") {
             Pipeline.send(this.state.recipient, parseInt(this.state.amount), this.state.note, myAddress, myAlgoWallet)
@@ -427,10 +428,10 @@ class test extends Component {
                   };
                 }
               });
-              this.updateBalance();
+            this.updateBalance();
           }
-          else{
-            Pipeline.sendASA(this.state.recipient, parseInt(this.state.amount), this.state.note, myAddress, myAlgoWallet,parseInt(this.state.asaNumb))
+          else {
+            Pipeline.sendASA(this.state.recipient, parseInt(this.state.amount), this.state.note, myAddress, myAlgoWallet, parseInt(this.state.asaNumb))
               .then(data => {
                 if (typeof data !== "undefined") {
                   data = url + data.slice(1, -1);
@@ -439,7 +440,7 @@ class test extends Component {
                   };
                 }
               });
-              this.updateBalance();
+            this.updateBalance();
           }
         }
         }
