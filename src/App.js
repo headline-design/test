@@ -8,6 +8,7 @@ import './App.css';
 
 import Select from 'react-select';
 import 'react-dropdown/style.css';
+import AsaList from './AsaList.js'
 
 
 import {
@@ -20,7 +21,9 @@ import {
   Link
 } from 'pipeline-ui'
 
-var url = 'https://algoexplorer.io/tx/'
+
+var asaNames = AsaList;
+var url = 'https://algoexplorer.io/tx/';
 var con_status = "Status: Not Connected";
 var myAddress = "";
 const myAlgoWallet = Pipeline.init();
@@ -343,7 +346,7 @@ class test extends Component {
   }
 
   asaNumbChangeHandler = (event) => {
-    this.setState({ asaNumb: event.target.value });
+    this.setState({ asaNumb: event.value });
     
   }
 
@@ -369,13 +372,19 @@ class test extends Component {
       <Card bg="black" color="white" maxWidth={"500px"}>{this.state.con_status_text}</Card>
 
       <AlgoAddress maxWidth={"500px"} address={this.state.address} /><br></br>
+
       <Field label="Select your asset:"></Field><br></br>
+      <div style={{width: '500px'}}>
       <Select
-      defaultValue={this.state.value}
-      onChange={this.asaChangeHandler}
-            options={opt}
-          /><Field style={{visibility: this.state.asaNumbVis}} label="ASA Index Number:">
-        <Input type="number" required={true} placeholder="" onChange={this.asaNumbChangeHandler} />
+        defaultValue={this.state.value}
+        onChange={this.asaChangeHandler}
+        options={opt}
+      /></div><Field style={{ visibility: this.state.asaNumbVis}} label="Verified ASA's:"><br></br>
+      <div style={{width: '500px'}}>
+        <Select
+          defaultValue={this.state.value}
+          onChange={this.asaChangeHandler}
+          options={asaNames} onChange={this.asaNumbChangeHandler} /></div><br></br>
       </Field><br></br>
 
       <Field label="Recipient Address">
@@ -395,7 +404,9 @@ class test extends Component {
               .then(data => {
                 if (typeof data !== "undefined") {
                   data = url + data.slice(1, -1);
-                  this.setState({ txID: data });
+                  if (window.confirm('Check out your transaction on Algo Explorer (refresh page if 404) . Cancel to stay here ')) {
+                    window.location.href = data;
+                  };
                 }
               });
           }
@@ -404,17 +415,15 @@ class test extends Component {
               .then(data => {
                 if (typeof data !== "undefined") {
                   data = url + data.slice(1, -1);
-                  this.setState({ txID: data });
+                  if (window.confirm('Check out your transaction on Algo Explorer (refresh page if 404) . Cancel to stay here ')) {
+                    window.location.href = data;
+                  };
                 }
               });
           }
         }
         }
       >Send</Button><br></br>
-
-      <Card bg="grey" color="white" maxWidth={"500px"}>
-        <Link onClick={() => { window.open(this.state.txID) }} >{this.state.txID}</Link>
-      </Card>
 
       <div className="app">
         <div className="row">
