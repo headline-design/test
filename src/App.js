@@ -18,6 +18,7 @@ import {
   AlgoAddress,
   Field,
   Input,
+  MyAlgoButton,
   Link
 } from 'pipeline-ui'
 
@@ -369,7 +370,7 @@ class test extends Component {
   render() {
     return <div align="center">
       <Heading>Pipeline UI Demo</Heading>
-      <Button size={'large'}
+      <MyAlgoButton size={'large'}
 
         onClick={() => {
           con_status = "Attempting to connect...";
@@ -384,7 +385,7 @@ class test extends Component {
             });
         }
         }
-      >Connect to MyAlgo</Button>
+      >Connect to MyAlgo</MyAlgoButton>
 
       <Card bg="black" color="white" maxWidth={"500px"}>{this.state.con_status_text + this.state.balance}</Card>
       
@@ -392,13 +393,13 @@ class test extends Component {
       <AlgoAddress maxWidth={"500px"} address={this.state.address} /><br></br>
 
       <Field label="Select your asset:"></Field>
-      <div style={{width: '500px'}}>
+      <div style={{width: '250px'}}>
       <Select
         defaultValue={this.state.value}
         onChange={this.asaChangeHandler}
         options={opt}
       /></div>
-      <div style={{width: '500px', display: this.state.asaNumbVis}}>
+      <div style={{width: '250px', display: this.state.asaNumbVis}}>
       <Field label="Verified ASA's:"></Field>
         <Select
           defaultValue={this.state.value}
