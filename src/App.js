@@ -43,7 +43,7 @@ class test extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      asaNumbVis: "hidden",
+      asaNumbVis: "none",
       asa: "Algorand",
       asaNumb: "",
       txID: "",
@@ -338,10 +338,10 @@ class test extends Component {
   asaChangeHandler = (event) => {
     this.setState({ asa: event.value });
     if (event.value == "Algorand"){
-      this.setState({ asaNumbVis: "hidden"});
+      this.setState({ asaNumbVis: "none"});
     }
     else{
-      this.setState({ asaNumbVis: "visible"});
+      this.setState({ asaNumbVis: "block"});
     }
   }
 
@@ -373,19 +373,19 @@ class test extends Component {
 
       <AlgoAddress maxWidth={"500px"} address={this.state.address} /><br></br>
 
-      <Field label="Select your asset:"></Field><br></br>
+      <Field label="Select your asset:"></Field>
       <div style={{width: '500px'}}>
       <Select
         defaultValue={this.state.value}
         onChange={this.asaChangeHandler}
         options={opt}
-      /></div><Field style={{ visibility: this.state.asaNumbVis}} label="Verified ASA's:"><br></br>
-      <div style={{width: '500px'}}>
+      /></div>
+      <div style={{width: '500px', display: this.state.asaNumbVis}}>
+      <Field label="Verified ASA's:"></Field>
         <Select
           defaultValue={this.state.value}
           onChange={this.asaChangeHandler}
-          options={asaNames} onChange={this.asaNumbChangeHandler} /></div><br></br>
-      </Field><br></br>
+          options={asaNames} onChange={this.asaNumbChangeHandler} /></div>
 
       <Field label="Recipient Address">
         <Input type="text" required={true} placeholder="" onChange={this.recipientChangeHandler} />
