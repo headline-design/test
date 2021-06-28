@@ -19,6 +19,9 @@ import {
   Field,
   Input,
   MyAlgoButton,
+  Blockie,
+  Table,
+  Link
 } from 'pipeline-ui'
 
 
@@ -35,15 +38,13 @@ const opt = [
 
 
 
-/*experimental function component*/
-function testfunc() {
-  return <div><p></p>test function</div>;
-}
 class test extends Component {
 
   constructor(props) {
     super(props);
     this.state = {
+      myTransactions:["1"],
+      tableVis: "none",
       balance: "",
       asaNumbVis: "none",
       asa: "Algorand",
@@ -318,6 +319,27 @@ class test extends Component {
     };
   }
 
+   transTable() {
+    return   <Table>
+    <thead>
+      <tr>
+        <th>My Latest Transactions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><Link target="_blank" href={url + this.state.myTransactions[0]}>{this.state.myTransactions[0]}</Link></td>
+      </tr>
+      <tr>
+        <td><Link target="_blank" href={url + this.state.myTransactions[0]}>{this.state.myTransactions[1]}</Link></td>
+      </tr>
+      <tr>
+        <td><Link target="_blank" href={url + this.state.myTransactions[0]}>{this.state.myTransactions[2]}</Link></td>
+      </tr>
+    </tbody>
+  </Table>
+  }
+
 
   updateBalance = () => {
     let url2 = indexerURL + myAddress;
@@ -330,6 +352,25 @@ class test extends Component {
       }).catch(function () {
         alert("Error occured  " + url2);
       });
+      this.updateTransactions();
+  }
+
+  updateTransactions = () => {
+    let url2 = indexerURL + myAddress + "/transactions?limit=5";
+    fetch(url2)
+      .then((response) => response.json())
+      .then(data => {
+
+        let myTransactions = data.transactions;
+        let myTransactionArray = [];
+        for (var i = 0; i < myTransactions.length; i++){
+          myTransactionArray.push( myTransactions[i].id)
+        }
+        this.setState({myTransactions: myTransactionArray})
+        this.setState({tableVis: "block"})
+      }).catch(function () {
+        alert("Error occured  " + url2);
+      });
   }
 
   updateConnection = () => {
@@ -338,6 +379,7 @@ class test extends Component {
       address: myAddress
     });
   }
+
 
   recipientChangeHandler = (event) => {
     this.setState({ recipient: event.target.value });
@@ -381,40 +423,48 @@ class test extends Component {
               myAddress = accounts;
               this.updateConnection();
               this.updateBalance();
+
             });
         }
         }
       >Connect to MyAlgo</MyAlgoButton>
 
       <Card bg="blue" color="white" maxWidth={"500px"}>{this.state.con_status_text + this.state.balance}</Card>
-
-
-      <AlgoAddress maxWidth={"500px"} address={this.state.address} /><br></br>
+ 
+      <AlgoAddress maxWidth={"500px"} address={this.state.address} textLabels /><br></br>
+      
+      <div style={{display: this.state.tableVis }}>
+      {this.transTable()}
+      <Button color="red" size={"350px"}
+        onClick={() => {
+          this.updateBalance();
+        }}>Refresh</Button>
+      </div>
 
       <Field label="Select your asset:"></Field>
-      <div style={{ width: '500px' }}>
+      <div style={{ maxWidth: '500px' }}>
         <Select
-          style={{ width: '500px' }}
+          style={{ maxWidth: '350px' }}
           defaultValue={this.state.value}
           onChange={this.asaChangeHandler}
           options={opt}
         />
       </div>
-      <div style={{ width: '500px', display: this.state.asaNumbVis }}>
+      <div style={{ maxWidth: '500px', display: this.state.asaNumbVis }}>
         <Field label="Verified ASA's:" required={true} ></Field>
         <Select
           defaultValue={this.state.value}
           onChange={this.asaChangeHandler}
           options={asaNames} onChange={this.asaNumbChangeHandler} /></div>
 
-      <Field label="Recipient Address" style={{ width: '500px' }}>
-        <Input style={{ width: '500px' }} type="text" required={true} placeholder="" onChange={this.recipientChangeHandler} />
+      <Field label="Recipient Address" style={{ maxWidth: '500px' }}>
+        <Input style={{ maxWidth: '500px' }} type="text" required={true} placeholder="" onChange={this.recipientChangeHandler} />
       </Field><br></br>
-      <Field style={{ width: '500px' }} label="Amount (in micro Algos)">
-        <Input style={{ width: '500px' }} type="number" required={true} placeholder="" onChange={this.amountChangeHandler} />
+      <Field style={{ maxWidth: '500px' }} label="Amount (in micro Algos)">
+        <Input style={{ maxWidth: '500px' }} type="number" required={true} placeholder="" onChange={this.amountChangeHandler} />
       </Field><br></br>
-      <Field style={{ width: '500px' }} label="Note">
-        <Input style={{ width: '500px' }} type="text" required={true} placeholder="" selectOnChange={this.noteChangeHandler} />
+      <Field style={{ maxWidth: '500px' }} label="Note">
+        <Input style={{ maxWidth: '500px' }} type="text" required={true} placeholder="" selectOnChange={this.noteChangeHandler} />
       </Field><br></br>
       <Button color="blue" size={"500px"}
         onClick={() => {
@@ -446,7 +496,17 @@ class test extends Component {
         }
       >Send</Button><br></br>
 
-      <div className="app">
+    
+
+      <Card bg="red" color="white" maxWidth={"500px"}>The function of this app is to demonstrate the ability to make a connection to MyAlgo via a custom class, execute various transaction and return data to multiple React components.</Card>
+
+    </div>
+  }
+}
+
+ /* place below code between div tags to include chart
+ 
+ <div className="app">
         <div className="row">
           <div className="mixed-chart">
             <Chart
@@ -457,11 +517,6 @@ class test extends Component {
             />
           </div>
         </div>
-      </div>
+      </div> */
 
-      <Card bg="blue" color="white" maxWidth={"500px"}>The function of this app is to demonstrate the ability to make a connection to MyAlgo via a custom class, execute a transaction and return data to multiple React components. The chart above is proof-of-concept only.</Card>
-
-    </div>
-  }
-}
 export default test
