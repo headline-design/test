@@ -319,27 +319,6 @@ class test extends Component {
     };
   }
 
-   transTable() {
-    return   <Table>
-    <thead>
-      <tr>
-        <th>My Latest Transactions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><Link target="_blank" href={url + this.state.myTransactions[0]}>{this.state.myTransactions[0]}</Link></td>
-      </tr>
-      <tr>
-        <td><Link target="_blank" href={url + this.state.myTransactions[0]}>{this.state.myTransactions[1]}</Link></td>
-      </tr>
-      <tr>
-        <td><Link target="_blank" href={url + this.state.myTransactions[0]}>{this.state.myTransactions[2]}</Link></td>
-      </tr>
-    </tbody>
-  </Table>
-  }
-
 
   updateBalance = () => {
     let url2 = indexerURL + myAddress;
@@ -368,9 +347,11 @@ class test extends Component {
         }
         this.setState({myTransactions: myTransactionArray})
         this.setState({tableVis: "block"})
+       // this.transTable();
       }).catch(function () {
         alert("Error occured  " + url2);
       });
+      
   }
 
   updateConnection = () => {
@@ -411,7 +392,7 @@ class test extends Component {
   render() {
     return <div align="center">
       <Heading>Pipeline UI Demo</Heading>
-      <MyAlgoButton size={"500px"}
+      <MyAlgoButton size={"large"}
 
         onClick={() => {
           con_status = "Attempting to connect...";
@@ -434,9 +415,27 @@ class test extends Component {
       <AlgoAddress maxWidth={"500px"} address={this.state.address} textLabels /><br></br>
       
       <div style={{display: this.state.tableVis }}>
-      {this.transTable()}
-      <Button color="red" size={"350px"}
-        onClick={() => {
+
+        <Table id="transTable" style={{ textAlign: "center" }}>
+          <thead>
+            <tr style={{ textAlign: "center" }}>
+              <th style={{ textAlign: "center" }}>My Latest Transactions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {this.state.myTransactions.map(row => (
+              <tr>
+                <td style={{ textAlign: "center" }}><Link target="_blank" href={url + row}>{row}</Link></td>
+              </tr>
+            ))}
+            <tr></tr>
+          </tbody>
+        </Table>
+
+      
+
+        <Button color="red" size={"350px"}
+          onClick={() => {
           this.updateBalance();
         }}>Refresh</Button>
       </div>
@@ -466,7 +465,7 @@ class test extends Component {
       <Field style={{ maxWidth: '500px' }} label="Note">
         <Input style={{ maxWidth: '500px' }} type="text" required={true} placeholder="" selectOnChange={this.noteChangeHandler} />
       </Field><br></br>
-      <Button color="blue" size={"500px"}
+      <Button color="blue" size={"large"}
         onClick={() => {
           if (this.state.asa == "Algorand") {
             Pipeline.send(this.state.recipient, parseInt(this.state.amount), this.state.note, myAddress, myAlgoWallet)
