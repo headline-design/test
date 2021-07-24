@@ -20,40 +20,31 @@ import {
   AlgoAddress,
   Field,
   Input,
-  MyAlgoButton,
-  Table,
-  Select,
-  Link
+  Select
 } from 'pipeline-ui'
 
 
 var indexerURL = "https://algoexplorerapi.io/idx2/v2/accounts/";
 var asaNames = AsaList;
-var url = 'https://algoexplorer.io/tx/';
-var con_status = "Status: Not Connected";
 const myAlgoWallet = Pipeline.init();
 const opt = [
   { value: 'Algorand', label: 'Algorand' },
   { value: 'ASA', label: 'Verified ASA' },
   { value: 'ASAindex', label: 'ASA from Index Number' }
 ]
-
-
-
 class test extends Component {
 
   constructor(props) {
     super(props);
     this.state = {
       update: false,
-      index: 0,
       asaIndVis: "none",
       myTransactions: ["1"],
       tableVis: "none",
       balance: "",
       asaNumbVis: "none",
       asa: "Algorand",
-      asaNumb: "",
+      asaNumb: 0,
       txID: "",
       amount: 1,
       note: "",
@@ -62,7 +53,6 @@ class test extends Component {
       address: "",
       ChartData
     };
-
   }
 
   componentDidUpdate(_prevProps, prevState) {
@@ -106,6 +96,7 @@ class test extends Component {
     switch (event.value) {
       case "Algorand":
         this.setState({ asaNumbVis: "none", asaIndVis: "none" });
+        this.setState({ asaNumb: 0 });
         break;
       case "ASA":
         this.setState({ asaNumbVis: "block", asaIndVis: "none" });
@@ -172,7 +163,7 @@ class test extends Component {
         <Input style={{ maxWidth: '500px' }} type="text" required={true} placeholder="" selectOnChange={this.noteChangeHandler} />
       </Field><br></br>
       <AlgoSendButton
-        index={this.state.index}
+        index={this.state.asaNumb}
         recipient={this.state.recipient}
         amount={this.state.amount}
         note={this.state.note}
@@ -181,7 +172,9 @@ class test extends Component {
         context={this}
         returnTo={"txID"}
       /><br></br>
-
+      <Card bg="blue" color="white" maxWidth={"500px"}>
+      {"Transaction ID: " + this.state.txID}
+      </Card>
       <Card bg="red" color="white" maxWidth={"500px"}>
         The function of this app is to demonstrate the ability to make a connection to MyAlgo via a custom class, execute various transactions and return data to multiple React components.
         </Card>
