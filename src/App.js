@@ -2,17 +2,18 @@ import React, { Component } from 'react'
 
 import Chart from "react-apexcharts";
 
-import Pipeline from "@pipeline-ui-2/pipeline";
-
 import './App.css';
 
-import Select from 'react-select';
 import 'react-dropdown/style.css';
-import AsaList from './AsaList.js'
 import ChartData from './ChartData.js'
 
 
 import {
+  Pipeline,
+  AsaList,
+  AlgoButton,
+  AlgoSendButton,
+  AlgoFetch,
   Button,
   Heading,
   Card,
@@ -20,10 +21,9 @@ import {
   Field,
   Input,
   MyAlgoButton,
-  Blockie,
   Table,
-  Link,
-  Radio
+  Select,
+  Link
 } from 'pipeline-ui'
 
 
@@ -31,7 +31,6 @@ var indexerURL = "https://algoexplorerapi.io/idx2/v2/accounts/";
 var asaNames = AsaList;
 var url = 'https://algoexplorer.io/tx/';
 var con_status = "Status: Not Connected";
-var myAddress = "";
 const myAlgoWallet = Pipeline.init();
 const opt = [
   { value: 'Algorand', label: 'Algorand' },
@@ -46,6 +45,8 @@ class test extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      update: false,
+      index: 0,
       asaIndVis: "none",
       myTransactions: ["1"],
       tableVis: "none",
@@ -57,54 +58,32 @@ class test extends Component {
       amount: 1,
       note: "",
       recipient: "",
-      con_status_text: con_status,
-      address: myAddress,
+      con_status_text: "Status: Not Connected",
+      address: "",
       ChartData
     };
+
   }
 
+  componentDidUpdate(_prevProps, prevState) {
+    if (prevState.address !== this.state.address){
+      this.setState({ con_status_text: "Connected" });
+      this.setState({tableVis: "block" });
+      this.updateBalance();
+    }
+  }
 
   updateBalance = () => {
-    let url2 = indexerURL + myAddress;
+    let url2 = indexerURL + this.state.address;
     fetch(url2)
       .then((response) => response.json())
       .then(data => {
-
         let myBalance = ". Balance: " + JSON.stringify(data.account.amount / 1000000) + " Algos";
         this.setState({ balance: myBalance });
       }).catch(function () {
         alert("Error occured  " + url2);
       });
-    this.updateTransactions();
   }
-
-  updateTransactions = () => {
-    let url2 = indexerURL + myAddress + "/transactions?limit=5";
-    fetch(url2)
-      .then((response) => response.json())
-      .then(data => {
-
-        let myTransactions = data.transactions;
-        let myTransactionArray = [];
-        for (var i = 0; i < myTransactions.length; i++) {
-          myTransactionArray.push(myTransactions[i].id)
-        }
-        this.setState({ myTransactions: myTransactionArray })
-        this.setState({ tableVis: "block" })
-        // this.transTable();
-      }).catch(function () {
-        alert("Error occured  " + url2);
-      });
-
-  }
-
-  updateConnection = () => {
-    this.setState({
-      con_status_text: con_status,
-      address: myAddress
-    });
-  }
-
 
   recipientChangeHandler = (event) => {
     this.setState({ recipient: event.target.value });
@@ -144,53 +123,19 @@ class test extends Component {
 
   render() {
     return <div align="center">
+      
       <Heading>Pipeline UI Demo</Heading>
-      <MyAlgoButton size={"large"}
 
-        onClick={() => {
-          con_status = "Attempting to connect...";
-          this.updateConnection();
+      <AlgoButton wallet={myAlgoWallet} context={this} returnTo={"address"} />
 
-          Pipeline.connect(myAlgoWallet)
-            .then(accounts => {
-              con_status = "Status: Connected";
-              myAddress = accounts;
-              this.updateConnection();
-              this.updateBalance();
-
-            });
-        }
-        }
-      >Connect to MyAlgo</MyAlgoButton>
-
-      <Card bg="blue" color="white" maxWidth={"500px"}>{this.state.con_status_text + this.state.balance}</Card>
+      <Card bg="blue" color="white" maxWidth={"500px"}>{this.state.con_status_text + this.state.balance}<br></br><Button onClick={this.updateBalance}>Refresh</Button></Card>
 
       <AlgoAddress maxWidth={"500px"} address={this.state.address} textLabels /><br></br>
 
-      <div style={{ display: this.state.tableVis }}>
+      <div style={{ maxWidth: '650px', display: this.state.tableVis, align: "center"}}>
 
-        <Table id="transTable" style={{ textAlign: "center" }}>
-          <thead>
-            <tr style={{ textAlign: "center" }}>
-              <th style={{ textAlign: "center" }}>My Latest Transactions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {this.state.myTransactions.map(row => (
-              <tr>
-                <td style={{ textAlign: "center" }}><Link target="_blank" href={url + row}>{row}</Link></td>
-              </tr>
-            ))}
-            <tr></tr>
-          </tbody>
-        </Table>
+      <AlgoFetch address={this.state.address}/>
 
-
-
-        <Button color="red" size={"350px"}
-          onClick={() => {
-            this.updateBalance();
-          }}>Refresh</Button>
       </div>
 
       <Field label="Select your asset:"></Field>
@@ -226,39 +171,20 @@ class test extends Component {
       <Field style={{ maxWidth: '500px' }} label="Note">
         <Input style={{ maxWidth: '500px' }} type="text" required={true} placeholder="" selectOnChange={this.noteChangeHandler} />
       </Field><br></br>
-      <Button color="blue" size={"large"}
-        onClick={() => {
-          if (this.state.asa == "Algorand") {
-            Pipeline.send(this.state.recipient, parseInt(this.state.amount), this.state.note, myAddress, myAlgoWallet)
-              .then(data => {
-                if (typeof data !== "undefined") {
-                  data = url + data.slice(1, -1);
-                  if (window.confirm('Check out your transaction on Algo Explorer (refresh page if 404) . Cancel to stay here ')) {
-                    window.location.href = data;
-                  };
-                }
-              });
-            this.updateBalance();
-          }
-          else {
-            Pipeline.sendASA(this.state.recipient, parseInt(this.state.amount), this.state.note, myAddress, myAlgoWallet, parseInt(this.state.asaNumb))
-              .then(data => {
-                if (typeof data !== "undefined") {
-                  data = url + data.slice(1, -1);
-                  if (window.confirm('Check out your transaction on Algo Explorer (refresh page if 404) . Cancel to stay here ')) {
-                    window.location.href = data;
-                  };
-                }
-              });
-            this.updateBalance();
-          }
-        }
-        }
-      >Send</Button><br></br>
+      <AlgoSendButton
+        index={this.state.index}
+        recipient={this.state.recipient}
+        amount={this.state.amount}
+        note={this.state.note}
+        myAddress={this.state.address}
+        wallet={myAlgoWallet}
+        context={this}
+        returnTo={"txID"}
+      /><br></br>
 
-
-
-      <Card bg="red" color="white" maxWidth={"500px"}>The function of this app is to demonstrate the ability to make a connection to MyAlgo via a custom class, execute various transaction and return data to multiple React components.</Card>
+      <Card bg="red" color="white" maxWidth={"500px"}>
+        The function of this app is to demonstrate the ability to make a connection to MyAlgo via a custom class, execute various transactions and return data to multiple React components.
+        </Card>
 
     </div>
   }
