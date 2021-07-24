@@ -160,7 +160,7 @@ class test extends Component {
         <Input style={{ maxWidth: '500px' }} type="number" required={true} placeholder="" onChange={this.amountChangeHandler} />
       </Field><br></br>
       <Field style={{ maxWidth: '500px' }} label="Note">
-        <Input style={{ maxWidth: '500px' }} type="text" required={true} placeholder="" selectOnChange={this.noteChangeHandler} />
+        <Input style={{ maxWidth: '500px' }} type="text" required={true} placeholder="" onChange={this.noteChangeHandler} />
       </Field><br></br>
       <AlgoSendButton
         index={this.state.asaNumb}
