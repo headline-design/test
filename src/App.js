@@ -20,7 +20,8 @@ import {
   AlgoAddress,
   Field,
   Input,
-  Select
+  Select,
+  Blockie
 } from 'pipeline-ui'
 
 
@@ -124,6 +125,16 @@ class test extends Component {
       <AlgoAddress maxWidth={"500px"} address={this.state.address} textLabels /><br></br>
 
       <div style={{ maxWidth: '650px', display: this.state.tableVis, align: "center"}}>
+        <Blockie
+          opts={{
+            seed: this.state.address,
+            color: "#dfe",
+            bgcolor: "#a71",
+            size: 30,
+            scale: 3,
+            spotcolor: "#000"
+          }}
+        />
 
       <AlgoFetch address={this.state.address}/>
 
