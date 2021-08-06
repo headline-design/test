@@ -21,7 +21,8 @@ import {
   Field,
   Input,
   Select,
-  Blockie
+  Blockie,
+  SwitchNet
 } from 'pipeline-ui'
 
 
@@ -57,9 +58,9 @@ class test extends Component {
   }
 
   componentDidUpdate(_prevProps, prevState) {
-    if (prevState.address !== this.state.address){
+    if (prevState.address !== this.state.address) {
       this.setState({ con_status_text: "Connected" });
-      this.setState({tableVis: "block" });
+      this.setState({ tableVis: "block" });
       this.updateBalance();
     }
   }
@@ -89,7 +90,7 @@ class test extends Component {
   }
 
   asaIndexChangeHandler = (event) => {
-    this.setState({asaNumb: event.target.value});
+    this.setState({ asaNumb: event.target.value });
   }
 
   asaChangeHandler = (event) => {
@@ -115,7 +116,7 @@ class test extends Component {
 
   render() {
     return <div align="center">
-      
+
       <Heading>Pipeline UI Demo</Heading>
 
       <AlgoButton wallet={myAlgoWallet} context={this} returnTo={"address"} />
@@ -124,7 +125,7 @@ class test extends Component {
 
       <AlgoAddress maxWidth={"500px"} address={this.state.address} textLabels /><br></br>
 
-      <div style={{ maxWidth: '650px', display: this.state.tableVis, align: "center"}}>
+      <div style={{ maxWidth: '650px', display: this.state.tableVis, align: "center" }}>
         <Blockie
           opts={{
             seed: this.state.address,
@@ -136,7 +137,7 @@ class test extends Component {
           }}
         />
 
-      <AlgoFetch address={this.state.address}/>
+        <AlgoFetch address={this.state.address} />
 
       </div>
 
@@ -173,6 +174,8 @@ class test extends Component {
       <Field style={{ maxWidth: '500px' }} label="Note">
         <Input style={{ maxWidth: '500px' }} type="text" required={true} placeholder="" onChange={this.noteChangeHandler} />
       </Field><br></br>
+      <div align="center" style={{ maxWidth: '100px'}}>
+        <SwitchNet /></div><br/>
       <AlgoSendButton
         index={this.state.asaNumb}
         recipient={this.state.recipient}
@@ -184,11 +187,11 @@ class test extends Component {
         returnTo={"txID"}
       /><br></br>
       <Card bg="blue" color="white" maxWidth={"500px"}>
-      {"Transaction ID: " + this.state.txID}
+        {"Transaction ID: " + this.state.txID}
       </Card>
       <Card bg="red" color="white" maxWidth={"500px"}>
         The function of this app is to demonstrate the ability to make a connection to MyAlgo via a custom class, execute various transactions and return data to multiple React components.
-        </Card>
+      </Card>
 
     </div>
   }
